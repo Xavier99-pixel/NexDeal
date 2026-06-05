@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "name": "NexDeal",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib"
+  }
+}
