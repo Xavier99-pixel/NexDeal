@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, User, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
+import { LayoutDashboard, Search, User, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrandLogo } from "@/components/brand-logo";
@@ -78,11 +78,18 @@ export function Header({ onSearch }: HeaderProps) {
               
               <Button asChild variant="ghost" size="sm" className="hidden md:flex items-center gap-2">
                 <Link href="/login">
-                <User className="h-5 w-5" />
-                <div className="text-left hidden lg:block">
-                  <p className="text-xs text-muted-foreground">Hello, Sign In</p>
-                  <p className="text-sm font-medium">Account & List</p>
-                </div>
+                  <User className="h-5 w-5" />
+                  <div className="text-left hidden lg:block">
+                    <p className="text-xs text-muted-foreground">Creator Login</p>
+                    <p className="text-sm font-medium">Sign In</p>
+                  </div>
+                </Link>
+              </Button>
+
+              <Button asChild size="sm" className="hidden lg:inline-flex">
+                <Link href="/admin">
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  Admin
                 </Link>
               </Button>
 
@@ -173,6 +180,12 @@ export function Header({ onSearch }: HeaderProps) {
             <div className="border-t border-border pt-3 space-y-2">
               <Link href="/#collections" className="block py-2 text-accent font-medium">
                 All Collections
+              </Link>
+              <Link href="/login" className="block py-2 text-foreground font-medium">
+                Creator Login
+              </Link>
+              <Link href="/admin" className="block py-2 text-primary font-medium">
+                Admin Panel
               </Link>
               <Link href="/terms" className="block py-2 text-muted-foreground">
                 Terms

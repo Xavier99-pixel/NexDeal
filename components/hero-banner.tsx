@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BadgePercent, ShieldCheck, Sparkles, Store, Tags } from "lucide-react";
+import { ArrowRight, BadgePercent, LayoutDashboard, LockKeyhole, ShieldCheck, Sparkles, Store, Tags } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 
 export function HeroBanner() {
@@ -41,6 +41,18 @@ export function HeroBanner() {
               </Button>
               <Button asChild variant="outline" className="h-12 px-6 bg-white/80">
                 <a href="#affiliate-guide">How links work</a>
+              </Button>
+              <Button asChild variant="outline" className="h-12 px-6 bg-white/80">
+                <a href="/login">
+                  <LockKeyhole className="h-4 w-4 mr-2" />
+                  Creator Login
+                </a>
+              </Button>
+              <Button asChild className="h-12 px-6 bg-[#e63516] hover:bg-[#ca2d12]">
+                <a href="/admin">
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Admin Panel
+                </a>
               </Button>
             </div>
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-foreground">

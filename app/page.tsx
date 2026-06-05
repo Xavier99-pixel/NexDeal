@@ -65,9 +65,14 @@ export default function HomePage() {
 
       <section id="affiliate-guide" className="bg-secondary/60 border-y border-border scroll-mt-32">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <p className="text-sm text-muted-foreground">
-            Disclosure: NexDeal may earn a commission when you buy through some product links, at no extra cost to you.
-          </p>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <p className="text-sm text-muted-foreground">
+              Disclosure: NexDeal may earn a commission when you buy through some product links, at no extra cost to you.
+            </p>
+            <p className="text-sm font-medium text-primary">
+              Backend ready: use Login to Admin Panel to add live affiliate products.
+            </p>
+          </div>
         </div>
       </section>
 
