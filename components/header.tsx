@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, User, Menu, X, ChevronDown, Sparkles } from "lucide-react";
+import { Search, Menu, X, ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrandLogo } from "@/components/brand-logo";
@@ -72,17 +72,6 @@ export function Header({ onSearch }: HeaderProps) {
                 <span className="text-muted-foreground">|</span>
                 <span className="text-muted-foreground">INR ₹</span>
               </div>
-              
-              <Button asChild variant="outline" size="sm" className="hidden md:flex h-11 items-center gap-2 rounded-full bg-white px-4">
-                <Link href="/login">
-                  <User className="h-4 w-4" />
-                  <div className="text-left hidden lg:block">
-                    <p className="text-xs text-muted-foreground">Account</p>
-                    <p className="text-sm font-semibold">Sign in</p>
-                  </div>
-                </Link>
-              </Button>
-
               <Button
                 variant="ghost"
                 size="sm"
@@ -161,9 +150,6 @@ export function Header({ onSearch }: HeaderProps) {
             <div className="border-t border-border pt-3 space-y-2">
               <Link href="/#collections" className="block py-2 text-accent font-medium">
                 All Collections
-              </Link>
-              <Link href="/login" className="block py-2 text-foreground font-medium">
-                Account Sign In
               </Link>
               <Link href="/terms" className="block py-2 text-muted-foreground">
                 Terms

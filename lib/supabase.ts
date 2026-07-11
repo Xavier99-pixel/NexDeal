@@ -19,24 +19,9 @@ export interface ProductRow {
   created_at?: string;
 }
 
-export const isSupabaseConfigured = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
 export const isSupabaseAdminConfigured = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
 );
-
-export function createBrowserSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return null;
-  }
-
-  return createClient(supabaseUrl, supabaseAnonKey);
-}
 
 export function createServerSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -101,37 +86,4 @@ export function productToRow(product: Product): Omit<ProductRow, "created_at"> {
     is_new: Boolean(product.isNew),
     is_featured: Boolean(product.isFeatured),
   };
-}
-
-export async function assertAdminUser(accessToken: string | null) {
-  const supabase = createServerSupabaseClient();
-  const adminEmail = process.env.ADMIN_EMAIL;
-
-  if (!supabase) {
-    return { ok: false, email: null, reason: "Supabase public environment variables are missing." };
-  }
-
-  if (!adminEmail) {
-    return { ok: false, email: null, reason: "ADMIN_EMAIL is missing in deployment environment variables." };
-  }
-
-  if (!accessToken) {
-    return { ok: false, email: null, reason: "No login token was sent. Sign in again." };
-  }
-
-  const { data, error } = await supabase.auth.getUser(accessToken);
-
-  if (error) {
-    return { ok: false, email: null, reason: error.message };
-  }
-
-  if (data.user?.email !== adminEmail) {
-    return {
-      ok: false,
-      email: data.user?.email ?? null,
-      reason: "Logged-in email does not match ADMIN_EMAIL.",
-    };
-  }
-
-  return { ok: true, email: data.user.email, reason: null };
 }

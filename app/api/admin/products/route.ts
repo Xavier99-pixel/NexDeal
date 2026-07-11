@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { assertAdminUser, createAdminSupabaseClient, rowToProduct } from "@/lib/supabase";
+import { assertAdminPasskey } from "@/lib/admin-auth";
+import { createAdminSupabaseClient, rowToProduct } from "@/lib/supabase";
 
 const productSchema = z.object({
   id: z.string().min(1).optional(),
@@ -19,21 +20,20 @@ const productSchema = z.object({
   isFeatured: z.coerce.boolean().optional(),
 });
 
-function getAccessToken(request: NextRequest) {
+function getAdminPasskey(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   return authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
 }
 
 async function requireAdmin(request: NextRequest) {
-  const accessToken = getAccessToken(request);
-  const admin = await assertAdminUser(accessToken);
+  const adminPasskey = getAdminPasskey(request);
+  const admin = assertAdminPasskey(adminPasskey);
 
   if (!admin.ok) {
     return NextResponse.json(
       {
         error: "Unauthorized admin request",
         reason: admin.reason,
-        signedInEmail: admin.email,
       },
       { status: 401 }
     );

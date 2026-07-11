@@ -23,9 +23,6 @@ curl http://localhost:3000/api/products
 Use Supabase first because it gives you:
 
 - Postgres database
-- Email login
-- Google OAuth
-- Apple OAuth
 - Row-level security
 - Free starter tier
 
@@ -68,32 +65,11 @@ Copy `.env.example` to `.env.local`, then add:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-ADMIN_EMAIL=your_email@gmail.com
+ADMIN_PASSKEY=your_private_admin_passkey
 ```
 
 Never expose `SUPABASE_SERVICE_ROLE_KEY` in browser code.
-
-## Login Providers
-
-For Google:
-
-1. Create a Google Cloud OAuth app.
-2. Add your local callback URL from Supabase Auth settings.
-3. Add your production callback URL after deploying.
-4. Enable Google provider inside Supabase Auth.
-
-For Apple:
-
-1. Create an Apple Developer account.
-2. Add Sign in with Apple credentials.
-3. Add callback URL from Supabase Auth settings.
-4. Enable Apple provider inside Supabase Auth.
-
-For Gmail/email:
-
-1. Enable Email provider in Supabase.
-2. Choose password login or magic-link login.
-3. Customize email templates after your domain is live.
+Never expose `ADMIN_PASSKEY` publicly. It is only typed into `/admin` by the site owner.
 
 ## Domain Plan For www.nexdeal.com
 

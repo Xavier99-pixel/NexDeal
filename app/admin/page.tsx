@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
-import { BarChart3, MousePointerClick, PackageSearch, Plus, RefreshCw, Save, Star, Trash2, TrendingUp } from "lucide-react";
+import { BarChart3, KeyRound, MousePointerClick, PackageSearch, Plus, RefreshCw, Save, Star, Trash2, TrendingUp } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { createBrowserSupabaseClient } from "@/lib/supabase";
 import type { Product } from "@/lib/products";
 
 const emptyProduct: Product = {
@@ -31,6 +31,7 @@ const emptyProduct: Product = {
 
 const stores: Product["store"][] = ["amazon", "flipkart", "myntra", "ajio", "meesho"];
 const categories = ["earbuds", "headphones", "keyboards", "mobiles", "laptops", "tablets", "cameras", "smartwatches", "speakers", "gaming"];
+const adminPasskeyStorageKey = "nexdeal_admin_passkey";
 
 interface AdminMetrics {
   analyticsReady: boolean;
@@ -73,57 +74,74 @@ export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<Product>(emptyProduct);
   const [metrics, setMetrics] = useState<AdminMetrics>(emptyMetrics);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [signedInEmail, setSignedInEmail] = useState("");
-  const [message, setMessage] = useState("Checking login...");
-  const supabase = useMemo(() => createBrowserSupabaseClient(), []);
+  const [adminKey, setAdminKey] = useState<string | null>(null);
+  const [adminPasskey, setAdminPasskey] = useState("");
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [message, setMessage] = useState("Enter your admin passkey to continue.");
 
   useEffect(() => {
-    async function loadSession() {
-      if (!supabase) {
-        setMessage("Supabase is not configured. Add .env.local keys before using admin.");
-        return;
-      }
+    const savedPasskey = window.localStorage.getItem(adminPasskeyStorageKey);
 
-      const { data } = await supabase.auth.getSession();
+    if (savedPasskey) {
+      setAdminPasskey(savedPasskey);
+      setAdminKey(savedPasskey);
+      loadProducts(savedPasskey);
+    }
+  }, []);
 
-      if (!data.session) {
-        setMessage("Please sign in to manage NexDeal products.");
-        return;
-      }
+  async function unlockAdmin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
-      setAccessToken(data.session.access_token);
-      setSignedInEmail(data.session.user.email ?? "");
-      await loadProducts(data.session.access_token);
+    const cleanPasskey = adminPasskey.trim();
+
+    if (!cleanPasskey) {
+      setMessage("Paste your admin passkey first.");
+      return;
     }
 
-    loadSession();
-  }, [supabase]);
+    setMessage("Checking passkey...");
+    const ok = await loadProducts(cleanPasskey);
 
-  async function loadProducts(token = accessToken) {
-    if (!token) return;
+    if (ok) {
+      window.localStorage.setItem(adminPasskeyStorageKey, cleanPasskey);
+      setAdminKey(cleanPasskey);
+      setIsUnlocked(true);
+      setMessage("Admin unlocked.");
+    }
+  }
+
+  async function loadProducts(passkey = adminKey) {
+    if (!passkey) {
+      setMessage("Enter your admin passkey first.");
+      return false;
+    }
 
     setMessage("Loading products...");
     const response = await fetch("/api/admin/products", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${passkey}` },
     });
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage([data.error, data.reason, data.signedInEmail ? `Signed in as ${data.signedInEmail}` : ""].filter(Boolean).join(" - ") || "Could not load products.");
-      return;
+      window.localStorage.removeItem(adminPasskeyStorageKey);
+      setIsUnlocked(false);
+      setAdminKey(null);
+      setMessage([data.error, data.reason].filter(Boolean).join(" - ") || "Could not load products.");
+      return false;
     }
 
     setProducts(data.products);
+    setIsUnlocked(true);
     setMessage("Products loaded.");
-    await loadMetrics(token);
+    await loadMetrics(passkey);
+    return true;
   }
 
-  async function loadMetrics(token = accessToken) {
-    if (!token) return;
+  async function loadMetrics(passkey = adminKey) {
+    if (!passkey) return;
 
     const response = await fetch("/api/admin/metrics", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${passkey}` },
     });
     const data = await response.json();
 
@@ -136,8 +154,8 @@ export default function AdminPage() {
   }
 
   async function saveProduct() {
-    if (!accessToken) {
-      setMessage("Sign in first.");
+    if (!adminKey) {
+      setMessage("Unlock admin first.");
       return;
     }
 
@@ -146,7 +164,7 @@ export default function AdminPage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${adminKey}`,
       },
       body: JSON.stringify({
         ...form,
@@ -160,7 +178,6 @@ export default function AdminPage() {
         [
           typeof data.error === "string" ? data.error : "Check all product fields.",
           data.reason,
-          data.signedInEmail ? `Signed in as ${data.signedInEmail}` : "",
         ]
           .filter(Boolean)
           .join(" - ")
@@ -174,19 +191,19 @@ export default function AdminPage() {
   }
 
   async function deleteProduct(id: string) {
-    if (!accessToken) {
-      setMessage("Sign in first.");
+    if (!adminKey) {
+      setMessage("Unlock admin first.");
       return;
     }
 
     const response = await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${adminKey}` },
     });
 
     if (!response.ok) {
       const data = await response.json();
-      setMessage([data.error, data.reason, data.signedInEmail ? `Signed in as ${data.signedInEmail}` : ""].filter(Boolean).join(" - ") || "Could not delete product.");
+      setMessage([data.error, data.reason].filter(Boolean).join(" - ") || "Could not delete product.");
       return;
     }
 
@@ -194,9 +211,14 @@ export default function AdminPage() {
     await loadProducts();
   }
 
-  async function signOut() {
-    await supabase?.auth.signOut();
-    window.location.href = "/login";
+  function lockAdmin() {
+    window.localStorage.removeItem(adminPasskeyStorageKey);
+    setAdminPasskey("");
+    setAdminKey(null);
+    setIsUnlocked(false);
+    setProducts([]);
+    setMetrics(emptyMetrics);
+    setMessage("Admin locked.");
   }
 
   function updateField<K extends keyof Product>(key: K, value: Product[K]) {
@@ -212,7 +234,7 @@ export default function AdminPage() {
             <Button asChild variant="outline">
               <Link href="/">View Site</Link>
             </Button>
-            <Button variant="outline" onClick={signOut}>Sign Out</Button>
+            {isUnlocked && <Button variant="outline" onClick={lockAdmin}>Lock Admin</Button>}
           </div>
         </div>
       </header>
@@ -222,26 +244,53 @@ export default function AdminPage() {
           <div>
             <p className="text-sm font-medium text-primary">Private NexDeal Backend</p>
             <h1 className="mt-2 text-3xl font-bold text-foreground">Manage products and performance</h1>
-            <p className="mt-2 text-muted-foreground">Add store products, review click trends, and keep the public site clean.</p>
+            <p className="mt-2 text-muted-foreground">Unlock with your admin passkey to add products and review click trends.</p>
           </div>
           <div className="flex gap-2">
-            {!accessToken && (
-              <Button asChild>
-                <Link href="/login?redirect=/admin">Admin Sign In</Link>
+            {isUnlocked && (
+              <Button variant="outline" onClick={() => loadProducts()}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh
               </Button>
             )}
-            <Button variant="outline" onClick={() => loadProducts()}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
-            </Button>
           </div>
         </div>
 
         <p className="mb-6 rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
-          {signedInEmail ? `Logged in as ${signedInEmail}. ` : ""}
           {message}
         </p>
 
+        {!isUnlocked ? (
+          <section className="mx-auto max-w-xl rounded-3xl border border-border bg-card p-6 shadow-sm">
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <KeyRound className="h-7 w-7" />
+            </div>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-primary">Admin passkey</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground">Unlock NexDeal backend</h2>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              Paste the private `ADMIN_PASSKEY` from Render environment variables. No Google login, email login, or public account is required for admin.
+            </p>
+            <form onSubmit={unlockAdmin} className="mt-6 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-passkey">Admin passkey</Label>
+                <Input
+                  id="admin-passkey"
+                  type="password"
+                  value={adminPasskey}
+                  onChange={(event) => setAdminPasskey(event.target.value)}
+                  placeholder="Paste ADMIN_PASSKEY"
+                  autoComplete="current-password"
+                  className="h-12"
+                />
+              </div>
+              <Button className="h-12 w-full rounded-full" type="submit">
+                <KeyRound className="mr-2 h-4 w-4" />
+                Unlock Admin
+              </Button>
+            </form>
+          </section>
+        ) : (
+          <>
         <section className="mb-8 grid gap-4 md:grid-cols-4">
           <MetricCard
             icon={PackageSearch}
@@ -409,6 +458,8 @@ export default function AdminPage() {
             </div>
           </section>
         </div>
+          </>
+        )}
       </main>
     </div>
   );
