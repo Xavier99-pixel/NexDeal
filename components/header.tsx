@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { LayoutDashboard, Search, User, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
+import { Search, User, Menu, X, ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BrandLogo } from "@/components/brand-logo";
 
 const navItems = [
-  { name: "Shop All", href: "/#collections", hasDropdown: false },
+  { name: "Top Picks", href: "/#collections", hasDropdown: false },
   { name: "Electronics", href: "/#collections", hasDropdown: false },
-  { name: "Offers", href: "/#affiliate-guide", hasDropdown: false },
+  { name: "Trending", href: "/#trending", hasDropdown: false },
+  { name: "Spotlight", href: "/#spotlight", hasDropdown: false },
   { name: "About", href: "/about", hasDropdown: false },
   { name: "Contact", href: "/contact", hasDropdown: false },
 ];
@@ -30,78 +31,58 @@ export function Header({ onSearch }: HeaderProps) {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Announcement Bar */}
-      <div className="bg-primary overflow-hidden">
+      <div className="bg-[#0b1f44] overflow-hidden">
         <div className="flex animate-marquee whitespace-nowrap py-2">
           {[...Array(4)].map((_, i) => (
             <span key={i} className="flex items-center">
-              <span className="mx-4 text-sm text-primary-foreground">
-                Affiliate-ready deals from Amazon, Flipkart, Myntra and more
+              <span className="mx-4 inline-flex items-center gap-2 text-sm font-medium text-white/90">
+                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+                Fresh picks across gadgets, fashion, beauty and home
               </span>
-              <span className="mx-4 text-sm text-accent font-bold">•</span>
+              <span className="mx-4 text-sm text-amber-300 font-bold">•</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Main Header */}
-      <div className="bg-card border-b border-border">
+      <div className="border-b border-border bg-white/95 shadow-sm backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
-            {/* Logo */}
             <BrandLogo className="shrink-0" />
 
-            {/* Search Bar - Desktop */}
             <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl">
               <div className="relative w-full flex">
                 <Input
                   type="text"
-                  placeholder="Search for products..."
+                  placeholder="Search mobiles, laptops, watches..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-r-none border-r-0 bg-secondary focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="h-11 w-full rounded-l-full rounded-r-none border-r-0 bg-[#f5f7fb] pl-5 focus-visible:ring-0 focus-visible:ring-offset-0"
                 />
-                <Button type="submit" className="rounded-l-none bg-accent hover:bg-accent/90 text-accent-foreground px-6">
+                <Button type="submit" className="h-11 rounded-l-none rounded-r-full bg-[#ffb000] px-6 text-[#111827] hover:bg-[#f4a300]">
                   <Search className="h-4 w-4 mr-2" />
                   Search
                 </Button>
               </div>
             </form>
 
-            {/* Right Actions */}
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="hidden lg:flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className="hidden lg:flex items-center gap-2 rounded-full border border-border bg-[#f8fafc] px-3 py-2 text-sm">
                 <span className="text-muted-foreground">EN</span>
                 <span className="text-muted-foreground">|</span>
                 <span className="text-muted-foreground">INR ₹</span>
               </div>
               
-              <Button asChild variant="ghost" size="sm" className="hidden md:flex items-center gap-2">
+              <Button asChild variant="outline" size="sm" className="hidden md:flex h-11 items-center gap-2 rounded-full bg-white px-4">
                 <Link href="/login">
-                  <User className="h-5 w-5" />
+                  <User className="h-4 w-4" />
                   <div className="text-left hidden lg:block">
-                    <p className="text-xs text-muted-foreground">Creator Login</p>
-                    <p className="text-sm font-medium">Sign In</p>
+                    <p className="text-xs text-muted-foreground">Account</p>
+                    <p className="text-sm font-semibold">Sign in</p>
                   </div>
                 </Link>
               </Button>
 
-              <Button asChild size="sm" className="hidden lg:inline-flex">
-                <Link href="/admin">
-                  <LayoutDashboard className="mr-2 h-4 w-4" />
-                  Admin
-                </Link>
-              </Button>
-
-              <Button variant="ghost" size="sm" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium">
-                  0
-                </span>
-                <span className="hidden lg:inline ml-2 text-sm">Rs.0.00</span>
-              </Button>
-
-              {/* Mobile Menu Button */}
               <Button
                 variant="ghost"
                 size="sm"
@@ -118,12 +99,12 @@ export function Header({ onSearch }: HeaderProps) {
             <div className="relative w-full flex">
               <Input
                 type="text"
-                placeholder="Search for products..."
+                placeholder="Search products..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-r-none border-r-0 bg-secondary"
+                className="w-full rounded-l-full rounded-r-none border-r-0 bg-[#f5f7fb]"
               />
-              <Button type="submit" className="rounded-l-none bg-accent hover:bg-accent/90 text-accent-foreground px-4">
+              <Button type="submit" className="rounded-l-none rounded-r-full bg-[#ffb000] px-4 text-[#111827] hover:bg-[#f4a300]">
                 <Search className="h-4 w-4" />
               </Button>
             </div>
@@ -131,7 +112,7 @@ export function Header({ onSearch }: HeaderProps) {
         </div>
 
         {/* Navigation */}
-        <nav className="bg-card border-t border-border">
+        <nav className="border-t border-border bg-white">
           <div className="max-w-7xl mx-auto px-4">
             <div className="hidden md:flex items-center justify-between py-2">
               <div className="flex items-center gap-6">
@@ -139,7 +120,7 @@ export function Header({ onSearch }: HeaderProps) {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    className="flex items-center gap-1 text-sm font-semibold text-foreground/82 transition-colors hover:text-primary"
                   >
                     {item.name}
                     {item.hasDropdown && <ChevronDown className="h-3 w-3" />}
@@ -147,7 +128,7 @@ export function Header({ onSearch }: HeaderProps) {
                 ))}
               </div>
               <div className="flex items-center gap-4">
-                <Link href="/#collections" className="text-sm text-accent font-medium hover:underline">
+                <Link href="/#collections" className="text-sm font-semibold text-[#b77800] hover:underline">
                   All Collections
                 </Link>
                 <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">
@@ -182,10 +163,7 @@ export function Header({ onSearch }: HeaderProps) {
                 All Collections
               </Link>
               <Link href="/login" className="block py-2 text-foreground font-medium">
-                Creator Login
-              </Link>
-              <Link href="/admin" className="block py-2 text-primary font-medium">
-                Admin Panel
+                Account Sign In
               </Link>
               <Link href="/terms" className="block py-2 text-muted-foreground">
                 Terms

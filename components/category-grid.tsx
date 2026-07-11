@@ -1,8 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { categories } from "@/lib/products";
 
 interface CategoryGridProps {
@@ -13,45 +11,34 @@ export function CategoryGrid({ onCategoryClick }: CategoryGridProps) {
   return (
     <section id="collections" className="py-12 bg-background scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Collection</h2>
-            <p className="text-muted-foreground mt-1">Top 10 Most Sold This Week, Next Day Delivery</p>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#b77800]">Shop by interest</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground md:text-4xl">Browse popular categories</h2>
+            <p className="mt-2 text-muted-foreground">Pick a niche and instantly narrow the product wall.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-accent font-medium hover:underline cursor-pointer">
-              View all collections
-            </span>
-            <div className="flex gap-1">
-              <Button variant="outline" size="icon" className="h-8 w-8">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="default" size="icon" className="h-8 w-8 bg-primary">
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          <p className="rounded-full bg-secondary px-4 py-2 text-sm font-semibold text-muted-foreground">
+            {categories.length}+ live collections
+          </p>
         </div>
 
-        {/* Category Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => onCategoryClick?.(category.id)}
-              className="group flex flex-col items-center p-4 bg-card rounded-xl border border-border hover:border-primary hover:shadow-lg transition-all"
+              className="group flex flex-col items-center rounded-2xl border border-border bg-card p-4 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
             >
-              <div className="relative w-16 h-16 md:w-20 md:h-20 mb-3">
+              <div className="relative mb-4 h-20 w-20 overflow-hidden rounded-2xl bg-[#f6f8fb] p-2 md:h-24 md:w-24">
                 <Image
                   src={category.image}
                   alt={category.name}
                   fill
-                  className="object-contain group-hover:scale-110 transition-transform"
+                  className="object-cover transition-transform duration-300 group-hover:scale-110"
                 />
               </div>
-              <h3 className="font-medium text-foreground text-sm">{category.name}</h3>
-              <p className="text-xs text-muted-foreground">{category.itemCount} items</p>
+              <h3 className="font-bold text-foreground text-sm">{category.name}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{category.itemCount} picks</p>
             </button>
           ))}
         </div>

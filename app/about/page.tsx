@@ -12,10 +12,10 @@ export default function AboutPage() {
           <p className="text-sm font-medium text-primary">About NexDeal</p>
           <h1 className="mt-3 text-4xl font-bold text-foreground">We help shoppers find better product choices.</h1>
           <p className="mt-5 text-lg leading-8 text-muted-foreground">
-            NexDeal is a curated affiliate shopping website that organizes useful products by niche, store, and deal value. Our goal is to make online shopping easier by helping visitors compare products and open the official store page when they are ready to buy.
+            NexDeal organizes useful products by category, store, and value signals so shoppers can compare faster and continue on the official store page when they are ready.
           </p>
           <p className="mt-5 leading-7 text-muted-foreground">
-            Some links on NexDeal may be affiliate links. When visitors buy through those links, we may earn a small commission at no extra cost to them. We aim to keep recommendations useful, clear, and easy to understand.
+            We keep recommendations focused, readable, and easy to understand, with clear pages for privacy, terms, and outbound shopping disclosures.
           </p>
           <Button asChild className="mt-8">
             <Link href="/">Explore Deals</Link>

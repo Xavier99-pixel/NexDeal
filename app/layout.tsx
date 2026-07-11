@@ -3,8 +3,8 @@ import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'NexDeal - Best Deals from Top Brands',
-  description: 'Find the best deals and discounts from Amazon, Flipkart, Myntra and more. Shop smart, save big with NexDeal!',
+  title: 'NexDeal - Smart Product Picks',
+  description: 'Discover curated product picks across gadgets, fashion, home and daily-use categories with NexDeal.',
   generator: 'v0.app',
   icons: {
     icon: [

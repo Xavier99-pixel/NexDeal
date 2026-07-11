@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 interface BrandLogoProps {
   href?: string;
@@ -15,11 +16,15 @@ export function BrandLogo({
 }: BrandLogoProps) {
   const logo = (
     <div className={`flex items-center gap-2.5 ${className}`}>
-      <div className="relative h-11 w-11 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,#0057a8_0%,#0057a8_42%,#ffb000_43%,#ff6b00_58%,#e63516_59%,#e63516_100%)]" />
-        <div className="absolute left-2 top-2 h-7 w-7 rounded-md bg-white/92 shadow-inner" />
-        <span className="absolute left-[13px] top-[7px] text-xl font-black tracking-normal text-[#0057a8]">N</span>
-        <span className="absolute bottom-1 right-1 h-2.5 w-2.5 rounded-full bg-[#ffb000]" />
+      <div className="relative h-12 w-12 overflow-hidden rounded-[18px] bg-white shadow-[0_10px_24px_rgba(15,39,86,0.16)] ring-1 ring-black/5">
+        <Image
+          src="/nexdeal-logo-ai.png"
+          alt=""
+          fill
+          sizes="48px"
+          className="object-cover"
+          priority
+        />
       </div>
       {!compact && (
         <div className="leading-none">
@@ -28,7 +33,7 @@ export function BrandLogo({
             <span className="text-[#e63516]">Deal</span>
           </p>
           <p className={`mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${inverted ? "text-white/75" : "text-muted-foreground"}`}>
-            We pick better
+            Better picks daily
           </p>
         </div>
       )}

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Apple, Chrome, Eye, EyeOff, Mail, Sparkles } from "lucide-react";
+import { Chrome, Eye, EyeOff, LockKeyhole, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +14,17 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [redirectTarget, setRedirectTarget] = useState("/");
   const [status, setStatus] = useState("");
   const supabase = createBrowserSupabaseClient();
+
+  useEffect(() => {
+    const requestedRedirect = new URLSearchParams(window.location.search).get("redirect");
+
+    if (requestedRedirect?.startsWith("/")) {
+      setRedirectTarget(requestedRedirect);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +42,7 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.href = "/admin";
+    window.location.href = redirectTarget;
   };
 
   const handleSignup = async () => {
@@ -47,41 +56,44 @@ export default function LoginPage() {
     setStatus(error ? error.message : "Account created. Check email if confirmation is enabled, then sign in.");
   };
 
-  const handleOAuth = async (provider: "google" | "apple") => {
+  const handleOAuth = async () => {
     if (!supabase) {
       setStatus("Supabase is not configured yet. Add your .env.local keys first.");
       return;
     }
 
     await supabase.auth.signInWithOAuth({
-      provider,
+      provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/admin`,
+        redirectTo: `${window.location.origin}${redirectTarget}`,
       },
     });
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f1ff] flex items-center justify-center px-4 py-10">
-      <div className="w-full max-w-6xl rounded-[28px] bg-white p-3 shadow-[0_24px_70px_rgba(58,45,130,0.18)]">
-        <div className="grid min-h-[620px] lg:grid-cols-[1.05fr_0.95fr] overflow-hidden rounded-[22px]">
-          <div className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#e8e1ff] p-8">
+    <div className="min-h-screen bg-[#f4f7fb] flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-6xl rounded-[32px] bg-white p-3 shadow-[0_28px_80px_rgba(8,31,68,0.14)]">
+        <div className="grid min-h-[640px] overflow-hidden rounded-[26px] lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative hidden flex-col justify-between overflow-hidden bg-[#0b1f44] p-8 lg:flex">
             <Image
               src="/nexdeal-intro.png"
               alt="NexDeal intro"
               fill
               priority
-              className="object-cover object-center opacity-35"
+              className="object-cover object-center opacity-20"
             />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.85),transparent_30%),linear-gradient(135deg,rgba(18,73,145,0.95),rgba(84,46,220,0.74),rgba(255,132,24,0.42))]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,176,0,0.28),transparent_28%),linear-gradient(135deg,rgba(11,31,68,0.98),rgba(0,87,168,0.82),rgba(230,53,22,0.32))]" />
             <BrandLogo inverted className="relative z-10" />
             <div className="relative z-10 max-w-md text-white">
-              <p className="mb-3 text-sm text-white/80">You can easily</p>
-              <h2 className="text-4xl font-bold leading-tight">
-                Save smarter with your personal deal hub
+              <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/85">
+                <ShieldCheck className="h-4 w-4 text-amber-300" />
+                Secure NexDeal access
+              </p>
+              <h2 className="text-5xl font-black leading-tight tracking-[-0.04em]">
+                Your cleaner shopping workspace.
               </h2>
               <p className="mt-5 text-sm leading-6 text-white/78">
-                Sign in to save favorite products, track niches, and manage future affiliate alerts.
+                Sign in to keep browsing smooth today, and unlock saved picks, alerts, and personal collections as NexDeal grows.
               </p>
             </div>
           </div>
@@ -91,11 +103,29 @@ export default function LoginPage() {
               <BrandLogo className="mb-8 lg:hidden" />
 
               <div className="mb-7">
-                <Sparkles className="mb-3 h-7 w-7 text-primary" />
-                <h1 className="text-3xl font-bold text-foreground">Create an account</h1>
+                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <LockKeyhole className="h-5 w-5" />
+                </div>
+                <h1 className="text-3xl font-black tracking-tight text-foreground">Sign in to NexDeal</h1>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Access saved products, wishlist deals, and future price alerts from one clean dashboard.
+                  Use Google or email access. Admin controls stay private at <span className="font-semibold text-foreground">/admin</span>.
                 </p>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="mb-5 h-12 w-full rounded-full border-border bg-white font-semibold shadow-sm hover:bg-secondary"
+                onClick={handleOAuth}
+              >
+                <Chrome className="mr-2 h-4 w-4" />
+                Continue with Google
+              </Button>
+
+              <div className="mb-5 flex items-center gap-4">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-xs font-semibold text-muted-foreground">or email</span>
+                <div className="h-px flex-1 bg-border" />
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -153,34 +183,6 @@ export default function LoginPage() {
                   {status}
                 </p>
               )}
-
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 h-px bg-border" />
-                <span className="text-muted-foreground text-xs">or continue with</span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { name: "Google", icon: Chrome, provider: "google" as const },
-                  { name: "Apple", icon: Apple, provider: "apple" as const },
-                  { name: "Gmail", icon: Mail, provider: null },
-                ].map((provider) => {
-                  const Icon = provider.icon;
-                  return (
-                    <Button
-                      key={provider.name}
-                      type="button"
-                      variant="outline"
-                      className="h-12 rounded-lg border-border bg-[#f4f4f7] hover:bg-secondary"
-                      aria-label={`Continue with ${provider.name}`}
-                      onClick={() => provider.provider && handleOAuth(provider.provider)}
-                    >
-                      <Icon className="h-4 w-4" />
-                    </Button>
-                  );
-                })}
-              </div>
 
               <p className="text-center mt-7 text-sm text-muted-foreground">
                 {"Already browsing? "}

@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, RefreshCw, Save, Trash2 } from "lucide-react";
+import { BarChart3, MousePointerClick, PackageSearch, Plus, RefreshCw, Save, Star, Trash2, TrendingUp } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,10 +32,49 @@ const emptyProduct: Product = {
 const stores: Product["store"][] = ["amazon", "flipkart", "myntra", "ajio", "meesho"];
 const categories = ["earbuds", "headphones", "keyboards", "mobiles", "laptops", "tablets", "cameras", "smartwatches", "speakers", "gaming"];
 
+interface AdminMetrics {
+  analyticsReady: boolean;
+  totalProducts: number;
+  featuredProducts: number;
+  totalClicks: number;
+  todayClicks: number;
+  last7DaysClicks: number;
+  topProducts: { name: string; clicks: number }[];
+  storeClicks: { store: string; clicks: number }[];
+  trend: { date: string; clicks: number }[];
+  setupHint?: string;
+}
+
+function createEmptyTrend() {
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (6 - index));
+
+    return {
+      date: date.toISOString().slice(0, 10),
+      clicks: 0,
+    };
+  });
+}
+
+const emptyMetrics: AdminMetrics = {
+  analyticsReady: true,
+  totalProducts: 0,
+  featuredProducts: 0,
+  totalClicks: 0,
+  todayClicks: 0,
+  last7DaysClicks: 0,
+  topProducts: [],
+  storeClicks: [],
+  trend: createEmptyTrend(),
+};
+
 export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState<Product>(emptyProduct);
+  const [metrics, setMetrics] = useState<AdminMetrics>(emptyMetrics);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [signedInEmail, setSignedInEmail] = useState("");
   const [message, setMessage] = useState("Checking login...");
   const supabase = useMemo(() => createBrowserSupabaseClient(), []);
 
@@ -53,6 +93,7 @@ export default function AdminPage() {
       }
 
       setAccessToken(data.session.access_token);
+      setSignedInEmail(data.session.user.email ?? "");
       await loadProducts(data.session.access_token);
     }
 
@@ -69,12 +110,29 @@ export default function AdminPage() {
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(data.error || "Could not load products.");
+      setMessage([data.error, data.reason, data.signedInEmail ? `Signed in as ${data.signedInEmail}` : ""].filter(Boolean).join(" - ") || "Could not load products.");
       return;
     }
 
     setProducts(data.products);
     setMessage("Products loaded.");
+    await loadMetrics(token);
+  }
+
+  async function loadMetrics(token = accessToken) {
+    if (!token) return;
+
+    const response = await fetch("/api/admin/metrics", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setMetrics(emptyMetrics);
+      return;
+    }
+
+    setMetrics(data);
   }
 
   async function saveProduct() {
@@ -98,7 +156,15 @@ export default function AdminPage() {
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(typeof data.error === "string" ? data.error : "Check all product fields.");
+      setMessage(
+        [
+          typeof data.error === "string" ? data.error : "Check all product fields.",
+          data.reason,
+          data.signedInEmail ? `Signed in as ${data.signedInEmail}` : "",
+        ]
+          .filter(Boolean)
+          .join(" - ")
+      );
       return;
     }
 
@@ -120,7 +186,7 @@ export default function AdminPage() {
 
     if (!response.ok) {
       const data = await response.json();
-      setMessage(data.error || "Could not delete product.");
+      setMessage([data.error, data.reason, data.signedInEmail ? `Signed in as ${data.signedInEmail}` : ""].filter(Boolean).join(" - ") || "Could not delete product.");
       return;
     }
 
@@ -154,18 +220,121 @@ export default function AdminPage() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-medium text-primary">Creator Backend</p>
-            <h1 className="mt-2 text-3xl font-bold text-foreground">Manage Affiliate Products</h1>
-            <p className="mt-2 text-muted-foreground">Add Amazon, Flipkart, Myntra and other affiliate products from one dashboard.</p>
+            <p className="text-sm font-medium text-primary">Private NexDeal Backend</p>
+            <h1 className="mt-2 text-3xl font-bold text-foreground">Manage products and performance</h1>
+            <p className="mt-2 text-muted-foreground">Add store products, review click trends, and keep the public site clean.</p>
           </div>
-          <Button variant="outline" onClick={() => loadProducts()}>
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Refresh
-          </Button>
+          <div className="flex gap-2">
+            {!accessToken && (
+              <Button asChild>
+                <Link href="/login?redirect=/admin">Admin Sign In</Link>
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => loadProducts()}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         <p className="mb-6 rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+          {signedInEmail ? `Logged in as ${signedInEmail}. ` : ""}
           {message}
+        </p>
+
+        <section className="mb-8 grid gap-4 md:grid-cols-4">
+          <MetricCard
+            icon={PackageSearch}
+            label="Live Products"
+            value={metrics.totalProducts || products.length}
+            detail="Products in Supabase"
+          />
+          <MetricCard
+            icon={Star}
+            label="Featured"
+            value={metrics.featuredProducts || products.filter((product) => product.isFeatured).length}
+            detail="Shown in top sections"
+          />
+          <MetricCard
+            icon={MousePointerClick}
+            label="Buy Clicks"
+            value={metrics.totalClicks}
+            detail="Outbound store opens"
+          />
+          <MetricCard
+            icon={TrendingUp}
+            label="Today"
+            value={metrics.todayClicks}
+            detail={`${metrics.last7DaysClicks} in last 7 days`}
+          />
+        </section>
+
+        <section className="mb-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-primary">Trend Watch</p>
+                <h2 className="text-lg font-bold text-foreground">Last 7 days click activity</h2>
+              </div>
+              <BarChart3 className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex h-40 items-end gap-3">
+              {(metrics.trend.length ? metrics.trend : emptyMetrics.trend).map((day) => {
+                const maxClicks = Math.max(...(metrics.trend.length ? metrics.trend : [{ clicks: 1 }]).map((item) => item.clicks), 1);
+                const height = Math.max((day.clicks / maxClicks) * 100, day.clicks > 0 ? 12 : 4);
+
+                return (
+                  <div key={day.date} className="flex flex-1 flex-col items-center gap-2">
+                    <div className="flex h-28 w-full items-end rounded-full bg-secondary">
+                      <div
+                        className="w-full rounded-full bg-primary transition-all"
+                        style={{ height: `${height}%` }}
+                        aria-label={`${day.clicks} clicks on ${day.date}`}
+                      />
+                    </div>
+                    <span className="text-[10px] font-semibold text-muted-foreground">
+                      {new Date(day.date).toLocaleDateString("en-IN", { weekday: "short" })}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            {!metrics.analyticsReady && (
+              <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                {metrics.setupHint}
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+            <div className="mb-5">
+              <p className="text-sm font-medium text-primary">Top products</p>
+              <h2 className="text-lg font-bold text-foreground">Most opened store links</h2>
+            </div>
+            <div className="space-y-4">
+              {metrics.topProducts.length === 0 && (
+                <p className="text-sm text-muted-foreground">No click data yet. Open a public product link once to test tracking.</p>
+              )}
+              {metrics.topProducts.map((product) => (
+                <ProgressRow key={product.name} label={product.name} value={product.clicks} max={metrics.topProducts[0]?.clicks ?? 1} />
+              ))}
+            </div>
+            <div className="mt-6 border-t border-border pt-4">
+              <p className="mb-3 text-sm font-semibold text-foreground">Store split</p>
+              <div className="space-y-3">
+                {metrics.storeClicks.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Store split appears after clicks.</p>
+                )}
+                {metrics.storeClicks.map((store) => (
+                  <ProgressRow key={store.store} label={store.store} value={store.clicks} max={metrics.storeClicks[0]?.clicks ?? 1} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <p className="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          Buy clicks mean shoppers opened a store product page from NexDeal. Confirm real orders and commissions inside Amazon Associates, Flipkart, Myntra, or the respective affiliate network dashboard.
         </p>
 
         <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
@@ -289,6 +458,55 @@ function SelectField({
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: number;
+  detail: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <Icon className="h-5 w-5" />
+        </div>
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">{label}</span>
+      </div>
+      <p className="mt-5 text-3xl font-black text-foreground">{value.toLocaleString("en-IN")}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{detail}</p>
+    </div>
+  );
+}
+
+function ProgressRow({
+  label,
+  value,
+  max,
+}: {
+  label: string;
+  value: number;
+  max: number;
+}) {
+  const width = Math.max((value / Math.max(max, 1)) * 100, 8);
+
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between gap-3 text-sm">
+        <span className="line-clamp-1 font-medium capitalize text-foreground">{label}</span>
+        <span className="font-bold text-primary">{value}</span>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-secondary">
+        <div className="h-full rounded-full bg-primary" style={{ width: `${width}%` }} />
+      </div>
     </div>
   );
 }

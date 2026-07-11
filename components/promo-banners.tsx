@@ -6,25 +6,25 @@ import { Button } from "@/components/ui/button";
 const banners = [
   {
     id: 1,
-    category: "Smartphone",
-    title: "Smartphones Innovation",
-    subtitle: "Next-Gen Technology",
+    category: "Mobiles",
+    title: "Premium phone picks",
+    subtitle: "Camera, battery and value compared",
     image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=400&fit=crop",
     bgColor: "bg-red-500",
   },
   {
     id: 2,
-    category: "Earbuds",
-    title: "Audio Freedom",
-    subtitle: "Sound Meets Innovation",
+    category: "Audio",
+    title: "Sound worth checking",
+    subtitle: "Earbuds, speakers and headphones",
     image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&h=400&fit=crop",
     bgColor: "bg-primary",
   },
   {
     id: 3,
-    category: "Tablets",
-    title: "Power Of Portable Tablets",
-    subtitle: "Performance On-The-Go",
+    category: "Work setup",
+    title: "Portable productivity",
+    subtitle: "Tablets and accessories that fit daily use",
     image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&h=400&fit=crop",
     bgColor: "bg-orange-400",
   },
@@ -38,7 +38,7 @@ export function PromoBanners() {
           {banners.map((banner) => (
             <div
               key={banner.id}
-              className={`${banner.bgColor} rounded-2xl overflow-hidden relative h-[250px] group`}
+              className={`${banner.bgColor} rounded-[28px] overflow-hidden relative h-[250px] group shadow-sm`}
             >
               <div className="absolute inset-0 p-6 flex flex-col justify-end z-10">
                 <p className="text-white/80 text-xs uppercase tracking-wider mb-1">
@@ -51,11 +51,12 @@ export function PromoBanners() {
                   {banner.subtitle}
                 </p>
                 <Button 
+                  asChild
                   variant="secondary" 
                   size="sm"
-                  className="w-fit bg-foreground text-background hover:bg-foreground/90"
+                  className="w-fit rounded-full bg-foreground text-background hover:bg-foreground/90"
                 >
-                  Shop Now
+                  <a href="#collections">Explore picks</a>
                 </Button>
               </div>
               

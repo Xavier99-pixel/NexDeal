@@ -29,7 +29,14 @@ async function requireAdmin(request: NextRequest) {
   const admin = await assertAdminUser(accessToken);
 
   if (!admin.ok) {
-    return NextResponse.json({ error: "Unauthorized admin request" }, { status: 401 });
+    return NextResponse.json(
+      {
+        error: "Unauthorized admin request",
+        reason: admin.reason,
+        signedInEmail: admin.email,
+      },
+      { status: 401 }
+    );
   }
 
   const supabase = createAdminSupabaseClient();

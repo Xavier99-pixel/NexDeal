@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 import { dealOfTheDay } from "@/lib/products";
 
 export function DealOfTheDay() {
@@ -53,17 +52,37 @@ export function DealOfTheDay() {
     }).format(price);
   };
 
+  const trackClick = (product: (typeof dealOfTheDay)[number]) => {
+    const payload = JSON.stringify({
+      productId: product.id,
+      productName: product.name,
+      store: product.store,
+      path: window.location.pathname,
+    });
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/track", new Blob([payload], { type: "application/json" }));
+      return;
+    }
+
+    fetch("/api/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+      keepalive: true,
+    }).catch(() => undefined);
+  };
+
   return (
-    <section className="py-12 bg-card border-y border-border">
+    <section id="spotlight" className="py-12 bg-card border-y border-border scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Deal Of The Days</h2>
-            <p className="text-muted-foreground mt-1">Deal Of The Day: Unbelievable Savings Await!</p>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#b77800]">Spotlight board</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-foreground md:text-4xl">Today&apos;s useful picks</h2>
+            <p className="mt-2 text-muted-foreground">A quick rail for products shoppers are likely to compare first.</p>
           </div>
           
-          {/* Countdown Timer */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               {[
@@ -73,7 +92,7 @@ export function DealOfTheDay() {
                 { value: timeLeft.secs, label: "Sec" },
               ].map((item, index) => (
                 <div key={item.label} className="flex items-center">
-                  <div className="bg-foreground text-background px-3 py-2 rounded-lg text-center min-w-[50px]">
+                  <div className="bg-[#0b1f44] text-white px-3 py-2 rounded-xl text-center min-w-[50px]">
                     <span className="text-xl font-bold">{item.value}</span>
                     <p className="text-[10px] uppercase">{item.label}</p>
                   </div>
@@ -81,27 +100,18 @@ export function DealOfTheDay() {
                 </div>
               ))}
             </div>
-            
-            <div className="flex gap-1 ml-4">
-              <Button variant="outline" size="icon" className="h-8 w-8">
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="default" size="icon" className="h-8 w-8 bg-primary">
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
         </div>
 
-        {/* Deal Products */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {dealOfTheDay.map((product) => (
             <a
               key={product.id}
               href={product.affiliateLink}
               target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center gap-3 p-3 bg-background rounded-xl border border-border hover:border-primary hover:shadow-md transition-all"
+              rel="sponsored noopener noreferrer"
+              onClick={() => trackClick(product)}
+              className="group flex items-center gap-3 rounded-2xl border border-border bg-background p-3 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg"
             >
               <div className="relative w-16 h-16 shrink-0">
                 <Image
@@ -120,6 +130,10 @@ export function DealOfTheDay() {
                     {formatPrice(product.originalPrice)}
                   </span>
                 </div>
+                <span className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-primary">
+                  View deal
+                  <ExternalLink className="h-3 w-3" />
+                </span>
               </div>
             </a>
           ))}

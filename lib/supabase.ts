@@ -107,15 +107,31 @@ export async function assertAdminUser(accessToken: string | null) {
   const supabase = createServerSupabaseClient();
   const adminEmail = process.env.ADMIN_EMAIL;
 
-  if (!supabase || !adminEmail || !accessToken) {
-    return { ok: false, email: null };
+  if (!supabase) {
+    return { ok: false, email: null, reason: "Supabase public environment variables are missing." };
+  }
+
+  if (!adminEmail) {
+    return { ok: false, email: null, reason: "ADMIN_EMAIL is missing in deployment environment variables." };
+  }
+
+  if (!accessToken) {
+    return { ok: false, email: null, reason: "No login token was sent. Sign in again." };
   }
 
   const { data, error } = await supabase.auth.getUser(accessToken);
 
-  if (error || data.user?.email !== adminEmail) {
-    return { ok: false, email: data.user?.email ?? null };
+  if (error) {
+    return { ok: false, email: null, reason: error.message };
   }
 
-  return { ok: true, email: data.user.email };
+  if (data.user?.email !== adminEmail) {
+    return {
+      ok: false,
+      email: data.user?.email ?? null,
+      reason: "Logged-in email does not match ADMIN_EMAIL.",
+    };
+  }
+
+  return { ok: true, email: data.user.email, reason: null };
 }
