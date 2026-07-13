@@ -84,7 +84,7 @@ export function CategoryProductPage({ categoryId }: CategoryProductPageProps) {
               </p>
               <h1 className="mt-5 text-5xl font-black tracking-[-0.05em] md:text-7xl">{title}</h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-white/75">
-                {category?.description ?? "A focused NexDeal collection with products you add from the private admin panel."}
+                {category?.description ?? "A handpicked collection built for faster comparison, better value checks, and smoother shopping decisions."}
               </p>
             </div>
           </div>
@@ -109,10 +109,10 @@ export function CategoryProductPage({ categoryId }: CategoryProductPageProps) {
         <section className="mx-auto max-w-7xl px-4 py-12">
           <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Products in this category</p>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Curated picks</p>
               <h2 className="mt-2 text-3xl font-black tracking-tight text-foreground">{title} picks</h2>
               <p className="mt-2 text-muted-foreground">
-                {searchQuery ? `Showing results for "${searchQuery}" inside ${title}.` : "Products shown here are controlled from /admin by category slug."}
+                {searchQuery ? `Showing results for "${searchQuery}" inside ${title}.` : "Compare prices, ratings, and store options in one clean collection."}
               </p>
             </div>
             <span className="rounded-full border border-border bg-white px-4 py-2 text-sm font-semibold text-muted-foreground">
@@ -128,9 +128,9 @@ export function CategoryProductPage({ categoryId }: CategoryProductPageProps) {
             </div>
           ) : (
             <div className="rounded-3xl border border-dashed border-border bg-white p-10 text-center">
-              <p className="text-xl font-bold text-foreground">No products in this category yet.</p>
+              <p className="text-xl font-bold text-foreground">Fresh picks are coming soon.</p>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
-                Open `/admin`, choose category slug <span className="font-bold text-foreground">{categoryId}</span>, save products, and they will appear here without redeploying.
+                This collection is being refreshed. Explore related categories while we line up better options.
               </p>
             </div>
           )}

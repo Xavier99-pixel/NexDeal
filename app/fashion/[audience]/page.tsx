@@ -50,8 +50,8 @@ export default async function FashionAudiencePage({ params }: FashionAudiencePag
           <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">Choose category</p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight text-foreground">Where should we go next?</h2>
-              <p className="mt-2 text-muted-foreground">Each tile opens a separate collection page with only products from that category slug.</p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-foreground">Shop by style need</h2>
+              <p className="mt-2 text-muted-foreground">Move from broad style edits into focused collections for easier product discovery.</p>
             </div>
             <span className="rounded-full bg-secondary px-4 py-2 text-sm font-bold text-muted-foreground">
               {audienceCategories.length} categories
