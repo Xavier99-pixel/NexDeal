@@ -14,7 +14,6 @@ import { ShieldCheck, Sparkles, Store } from "lucide-react";
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [siteProducts, setSiteProducts] = useState<Product[]>(staticProducts);
 
   useEffect(() => {
@@ -38,17 +37,11 @@ export default function HomePage() {
       searchQuery === "" ||
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = 
-      selectedCategory === null || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-  };
-
-  const handleCategoryClick = (categoryId: string) => {
-    setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
   };
 
   return (
@@ -59,7 +52,7 @@ export default function HomePage() {
       <HeroBanner />
 
       {/* Category Collection */}
-      <CategoryGrid onCategoryClick={handleCategoryClick} />
+      <CategoryGrid />
 
       {/* Deals Marquee */}
       <DealsMarquee />
@@ -86,9 +79,9 @@ export default function HomePage() {
 
       {/* Featured Collection */}
       <FeaturedProducts 
-        products={searchQuery || selectedCategory ? filteredProducts : visibleFeaturedProducts}
-        title={searchQuery ? `Search: "${searchQuery}"` : selectedCategory ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` : "Trending picks"}
-        subtitle={searchQuery || selectedCategory ? `${filteredProducts.length} products found` : "Products selected for useful savings, ratings and trusted store checkout."}
+        products={searchQuery ? filteredProducts : visibleFeaturedProducts}
+        title={searchQuery ? `Search: "${searchQuery}"` : "Trending picks"}
+        subtitle={searchQuery ? `${filteredProducts.length} products found` : "Products selected for useful savings, ratings and trusted store checkout."}
       />
 
       {/* Deal of the Day */}

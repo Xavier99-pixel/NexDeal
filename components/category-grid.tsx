@@ -1,13 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { categories } from "@/lib/products";
 
-interface CategoryGridProps {
-  onCategoryClick?: (categoryId: string) => void;
-}
-
-export function CategoryGrid({ onCategoryClick }: CategoryGridProps) {
+export function CategoryGrid() {
   return (
     <section id="collections" className="py-12 bg-background scroll-mt-32">
       <div className="max-w-7xl mx-auto px-4">
@@ -24,9 +21,9 @@ export function CategoryGrid({ onCategoryClick }: CategoryGridProps) {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
           {categories.map((category) => (
-            <button
+            <Link
               key={category.id}
-              onClick={() => onCategoryClick?.(category.id)}
+              href={category.href ?? `/category/${category.id}`}
               className="group flex flex-col items-center rounded-2xl border border-border bg-card p-4 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl"
             >
               <div className="relative mb-4 h-20 w-20 overflow-hidden rounded-2xl bg-[#f6f8fb] p-2 md:h-24 md:w-24">
@@ -39,7 +36,10 @@ export function CategoryGrid({ onCategoryClick }: CategoryGridProps) {
               </div>
               <h3 className="font-bold text-foreground text-sm">{category.name}</h3>
               <p className="mt-1 text-xs text-muted-foreground">{category.itemCount} picks</p>
-            </button>
+              {category.description && (
+                <p className="mt-2 line-clamp-1 text-[11px] font-medium text-primary">{category.description}</p>
+              )}
+            </Link>
           ))}
         </div>
       </div>

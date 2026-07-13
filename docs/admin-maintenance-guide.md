@@ -86,6 +86,29 @@ Open `/admin`, unlock with the passkey, and fill:
 
 Click `Save Product`. The product saves to Supabase and appears on the website.
 
+## Fashion Category Slugs
+
+Use these category values in `/admin` for fashion products:
+
+```text
+men-shirts
+men-tshirts
+men-jeans
+men-shoes
+men-watches
+women-dresses
+women-kurtis
+women-tops
+women-footwear
+women-bags
+```
+
+Customer flow:
+
+```text
+/fashion -> Men or Women -> Fashion category -> /category/category-slug -> matching products
+```
+
 ## Do You Need To Redeploy Every Time?
 
 No. You do not redeploy when adding, editing, or deleting products from `/admin`.

@@ -20,20 +20,71 @@ export interface Category {
   name: string;
   image: string;
   itemCount: number;
+  description?: string;
+  href?: string;
+  audience?: "men" | "women";
 }
 
 export const categories: Category[] = [
-  { id: "earbuds", name: "Earbuds", image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=200&h=200&fit=crop", itemCount: 24 },
-  { id: "headphones", name: "Headphones", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=200&fit=crop", itemCount: 18 },
-  { id: "keyboards", name: "Keyboards", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=200&h=200&fit=crop", itemCount: 12 },
-  { id: "mobiles", name: "Mobiles", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200&h=200&fit=crop", itemCount: 36 },
-  { id: "laptops", name: "Laptops", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&h=200&fit=crop", itemCount: 15 },
-  { id: "tablets", name: "Tablets", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=200&h=200&fit=crop", itemCount: 8 },
-  { id: "cameras", name: "Cameras", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=200&h=200&fit=crop", itemCount: 10 },
-  { id: "smartwatches", name: "Smartwatches", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&h=200&fit=crop", itemCount: 22 },
-  { id: "speakers", name: "Speakers", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=200&h=200&fit=crop", itemCount: 14 },
-  { id: "gaming", name: "Gaming", image: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=200&h=200&fit=crop", itemCount: 20 },
+  { id: "earbuds", name: "Earbuds", image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300&h=300&fit=crop", itemCount: 24, href: "/category/earbuds" },
+  { id: "headphones", name: "Headphones", image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop", itemCount: 18, href: "/category/headphones" },
+  { id: "mobiles", name: "Mobiles", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300&h=300&fit=crop", itemCount: 36, href: "/category/mobiles" },
+  { id: "laptops", name: "Laptops", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=300&fit=crop", itemCount: 15, href: "/category/laptops" },
+  { id: "fashion", name: "Fashion", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=300&h=300&fit=crop", itemCount: 64, href: "/fashion", description: "Men and women style edits" },
+  { id: "smartwatches", name: "Smartwatches", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop", itemCount: 22, href: "/category/smartwatches" },
+  { id: "speakers", name: "Speakers", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=300&h=300&fit=crop", itemCount: 14, href: "/category/speakers" },
+  { id: "gaming", name: "Gaming", image: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300&h=300&fit=crop", itemCount: 20, href: "/category/gaming" },
+  { id: "keyboards", name: "Keyboards", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300&h=300&fit=crop", itemCount: 12, href: "/category/keyboards" },
+  { id: "tablets", name: "Tablets", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&h=300&fit=crop", itemCount: 8, href: "/category/tablets" },
+  { id: "cameras", name: "Cameras", image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300&h=300&fit=crop", itemCount: 10, href: "/category/cameras" },
 ];
+
+export const fashionAudiences = [
+  {
+    id: "men",
+    name: "Men",
+    eyebrow: "Sharp everyday fits",
+    description: "Shirts, tees, denim, sneakers and accessories built around easy daily styling.",
+    image: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=900&h=1100&fit=crop",
+    href: "/fashion/men",
+  },
+  {
+    id: "women",
+    name: "Women",
+    eyebrow: "Fresh style edits",
+    description: "Dresses, kurtis, tops, footwear, bags and accessories for occasion-led shopping.",
+    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=900&h=1100&fit=crop",
+    href: "/fashion/women",
+  },
+] as const;
+
+export const fashionCategories: Category[] = [
+  { id: "men-shirts", name: "Shirts", audience: "men", image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=400&h=500&fit=crop", itemCount: 16, href: "/category/men-shirts", description: "Casual, formal and printed shirts" },
+  { id: "men-tshirts", name: "T-shirts", audience: "men", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=500&fit=crop", itemCount: 22, href: "/category/men-tshirts", description: "Oversized, basics and graphic tees" },
+  { id: "men-jeans", name: "Jeans", audience: "men", image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=500&fit=crop", itemCount: 14, href: "/category/men-jeans", description: "Slim, straight and relaxed denim" },
+  { id: "men-shoes", name: "Shoes", audience: "men", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=500&fit=crop", itemCount: 20, href: "/category/men-shoes", description: "Sneakers, casual and formal shoes" },
+  { id: "men-watches", name: "Watches", audience: "men", image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=400&h=500&fit=crop", itemCount: 12, href: "/category/men-watches", description: "Analog, smart and statement watches" },
+  { id: "women-dresses", name: "Dresses", audience: "women", image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&h=500&fit=crop", itemCount: 20, href: "/category/women-dresses", description: "Mini, midi, maxi and party dresses" },
+  { id: "women-kurtis", name: "Kurtis", audience: "women", image: "https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400&h=500&fit=crop", itemCount: 18, href: "/category/women-kurtis", description: "Daily wear and festive ethnic styles" },
+  { id: "women-tops", name: "Tops", audience: "women", image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400&h=500&fit=crop", itemCount: 24, href: "/category/women-tops", description: "Tops, tunics and statement layers" },
+  { id: "women-footwear", name: "Footwear", audience: "women", image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=500&fit=crop", itemCount: 16, href: "/category/women-footwear", description: "Heels, flats, sneakers and sandals" },
+  { id: "women-bags", name: "Bags", audience: "women", image: "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=400&h=500&fit=crop", itemCount: 13, href: "/category/women-bags", description: "Handbags, sling bags and wallets" },
+];
+
+export const catalogCategories = [...categories.filter((category) => category.id !== "fashion"), ...fashionCategories];
+
+export const adminCategoryOptions = catalogCategories.map((category) => ({
+  value: category.id,
+  label: `${category.audience ? `${category.audience === "men" ? "Men" : "Women"} Fashion - ` : ""}${category.name}`,
+}));
+
+export function getCategoryById(categoryId: string) {
+  return catalogCategories.find((category) => category.id === categoryId);
+}
+
+export function formatCategoryName(categoryId: string) {
+  return getCategoryById(categoryId)?.name ?? categoryId.replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
 
 export const stores = [
   { id: "all", name: "All Stores", color: "#1e3a5f" },
@@ -339,6 +390,95 @@ export const products: Product[] = [
     affiliateLink: "https://www.flipkart.com/product?affid=YOUR_AFFILIATE_ID",
     rating: 4.8,
     reviews: 1890,
+  },
+  // Fashion
+  {
+    id: "21",
+    name: "Oxford Cotton Slim Fit Shirt",
+    description: "Breathable cotton, button-down collar, office-to-weekend style",
+    price: 1299,
+    originalPrice: 2499,
+    discount: 48,
+    image: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=500&h=600&fit=crop",
+    category: "men-shirts",
+    store: "myntra",
+    affiliateLink: "https://www.myntra.com/shirts?utm_source=nexdeal",
+    rating: 4.3,
+    reviews: 2870,
+    isFeatured: true,
+  },
+  {
+    id: "22",
+    name: "Oversized Heavyweight Graphic T-shirt",
+    description: "Relaxed streetwear fit with premium cotton jersey feel",
+    price: 799,
+    originalPrice: 1599,
+    discount: 50,
+    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=600&fit=crop",
+    category: "men-tshirts",
+    store: "ajio",
+    affiliateLink: "https://www.ajio.com/men-tshirts?utm_source=nexdeal",
+    rating: 4.1,
+    reviews: 5210,
+    isNew: true,
+  },
+  {
+    id: "23",
+    name: "Minimal White Sneakers",
+    description: "Clean low-top design for casual and smart-casual outfits",
+    price: 1899,
+    originalPrice: 3999,
+    discount: 53,
+    image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&h=600&fit=crop",
+    category: "men-shoes",
+    store: "myntra",
+    affiliateLink: "https://www.myntra.com/men-casual-shoes?utm_source=nexdeal",
+    rating: 4.4,
+    reviews: 4060,
+  },
+  {
+    id: "24",
+    name: "Printed Summer Midi Dress",
+    description: "Lightweight flowy dress with soft print and relaxed silhouette",
+    price: 1499,
+    originalPrice: 3299,
+    discount: 55,
+    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&h=600&fit=crop",
+    category: "women-dresses",
+    store: "myntra",
+    affiliateLink: "https://www.myntra.com/dresses?utm_source=nexdeal",
+    rating: 4.5,
+    reviews: 3890,
+    isFeatured: true,
+  },
+  {
+    id: "25",
+    name: "Straight Fit Daily Wear Kurti",
+    description: "Soft fabric kurti for office, college and daily festive styling",
+    price: 699,
+    originalPrice: 1499,
+    discount: 53,
+    image: "https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=500&h=600&fit=crop",
+    category: "women-kurtis",
+    store: "meesho",
+    affiliateLink: "https://www.meesho.com/women-kurtis?utm_source=nexdeal",
+    rating: 4.2,
+    reviews: 7410,
+  },
+  {
+    id: "26",
+    name: "Structured Everyday Sling Bag",
+    description: "Compact bag with premium finish for work and weekend looks",
+    price: 999,
+    originalPrice: 2199,
+    discount: 55,
+    image: "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=500&h=600&fit=crop",
+    category: "women-bags",
+    store: "ajio",
+    affiliateLink: "https://www.ajio.com/women-bags?utm_source=nexdeal",
+    rating: 4.3,
+    reviews: 2175,
+    isNew: true,
   },
 ];
 

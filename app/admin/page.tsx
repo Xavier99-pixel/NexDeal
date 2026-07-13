@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import type { Product } from "@/lib/products";
+import { adminCategoryOptions, type Product } from "@/lib/products";
 
 const emptyProduct: Product = {
   id: "",
@@ -30,7 +30,6 @@ const emptyProduct: Product = {
 };
 
 const stores: Product["store"][] = ["amazon", "flipkart", "myntra", "ajio", "meesho"];
-const categories = ["earbuds", "headphones", "keyboards", "mobiles", "laptops", "tablets", "cameras", "smartwatches", "speakers", "gaming"];
 const adminPasskeyStorageKey = "nexdeal_admin_passkey";
 
 interface AdminMetrics {
@@ -412,7 +411,7 @@ export default function AdminPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <SelectField label="Store" value={form.store} options={stores} onChange={(value) => updateField("store", value as Product["store"])} />
-                <SelectField label="Category" value={form.category} options={categories} onChange={(value) => updateField("category", value)} />
+                <SelectField label="Category" value={form.category} options={adminCategoryOptions} onChange={(value) => updateField("category", value)} />
               </div>
 
               <div className="flex gap-5">
@@ -492,7 +491,7 @@ function SelectField({
 }: {
   label: string;
   value: string;
-  options: string[];
+  options: Array<string | { value: string; label: string }>;
   onChange: (value: string) => void;
 }) {
   return (
@@ -503,11 +502,16 @@ function SelectField({
         onChange={(event) => onChange(event.target.value)}
         className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
       >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+        {options.map((option) => {
+          const value = typeof option === "string" ? option : option.value;
+          const label = typeof option === "string" ? option : option.label;
+
+          return (
+          <option key={value} value={value}>
+            {label}
           </option>
-        ))}
+        );
+        })}
       </select>
     </div>
   );

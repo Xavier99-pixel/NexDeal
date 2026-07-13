@@ -9,7 +9,8 @@ import { BrandLogo } from "@/components/brand-logo";
 
 const navItems = [
   { name: "Top Picks", href: "/#collections", hasDropdown: false },
-  { name: "Electronics", href: "/#collections", hasDropdown: false },
+  { name: "Electronics", href: "/category/mobiles", hasDropdown: false },
+  { name: "Fashion", href: "/fashion", hasDropdown: false },
   { name: "Trending", href: "/#trending", hasDropdown: false },
   { name: "Spotlight", href: "/#spotlight", hasDropdown: false },
   { name: "About", href: "/about", hasDropdown: false },
